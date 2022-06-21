@@ -37,9 +37,11 @@ Nodes that are available to allocate are stored in a stack (`FreeNodeStack`).  T
 
 When a Node is allocated it will be made available by also adding the node index to the `FreeNodeStack`.  When a new node is required for key storage it is aquired by popping a node index from the `FreeNodeStack`.  If no nodes are available in the `FreeNodeStack` then this is an indication that a new Node must be added to the tree and the file must grow.
 
+```
  20 bytes   n bytes    n bytes   n bytes   ...
 +--------+-----------+---------+---------+-----+
 [ header | root node | node #1 | node #2 | ... ]
+```
 
 ### File Layout
 * Header (tree info)
