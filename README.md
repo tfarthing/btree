@@ -63,3 +63,9 @@ When a Node is allocated it will be made available by also adding the node index
 * keys[2*Degree-1] (KeySize each)
 * values[2*Degree-1] (8B each)
 
+## To Do
+* Deallocation of unused nodes to truncate the file
+* Iteration & for-each pattern
+* Optimize read/write usage
+* Cached reads
+* memory mapped file
