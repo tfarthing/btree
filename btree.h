@@ -219,19 +219,19 @@ inline bool BTree::put( std::string key, value_t value )
 }
 
 
-std::optional<BTree::value_t> BTree::remove( const std::string & key )
+inline std::optional<BTree::value_t> BTree::remove( const std::string & key )
 {
     return tree.remove( m_root, key );
 }
 
 
-size_t BTree::size( ) const
+inline size_t BTree::size( ) const
 {
     return m_header.keyCount;
 }
 
 
-std::vector<std::string> BTree::getKeysInNode( int nodeId )
+inline std::vector<std::string> BTree::getKeysInNode( int nodeId )
 {
     if ( nodeId == 0 )
         { return m_root.keys; }
@@ -240,7 +240,7 @@ std::vector<std::string> BTree::getKeysInNode( int nodeId )
 }
 
 
-std::vector<int> BTree::getChildrenInNode( int nodeId )
+inline std::vector<int> BTree::getChildrenInNode( int nodeId )
 {
     if ( nodeId == 0 )
         { return m_root.kids; }
@@ -249,7 +249,7 @@ std::vector<int> BTree::getChildrenInNode( int nodeId )
 }
 
 
-std::vector<int> BTree::getFreeNodes( )
+inline std::vector<int> BTree::getFreeNodes( )
 {
     std::vector<int> result;
 
@@ -584,7 +584,7 @@ inline BTree::ITree::ITree( BTree & btree )
 //! 7     return NIL
 //! 8 else DISK-READ(x.c[i])
 //! 9     return B-TREE-SEARCH(x.c[i], k)
-std::optional<BTree::ITree::KeyRef> BTree::ITree::search( const Node & x, const std::string & key ) const
+inline std::optional<BTree::ITree::KeyRef> BTree::ITree::search( const Node & x, const std::string & key ) const
 {
     Node nodeData;
     const Node * node = &x;
@@ -612,7 +612,7 @@ std::optional<BTree::ITree::KeyRef> BTree::ITree::search( const Node & x, const 
 //! 8      B-TREE-SPLIT-CHILD(s,1)
 //! 9      B-TREE-INSERT-NONFULL(s,k)
 //! 10 else B-TREE-INSERT-NONFULL(r,k)
-bool BTree::ITree::insert( const std::string & key, value_t value )
+inline bool BTree::ITree::insert( const std::string & key, value_t value )
 {
     Node & root = self.m_root;
     if ( root.keys.size( ) == self.maxKeysPerNode( ) )
@@ -640,7 +640,7 @@ bool BTree::ITree::insert( const std::string & key, value_t value )
 }
 
 
-std::optional<BTree::value_t> BTree::ITree::remove( Node & node, const std::string & key )
+inline std::optional<BTree::value_t> BTree::ITree::remove( Node & node, const std::string & key )
 {
     value_t value;
     std::optional<value_t> result = removeKey( node, key, value )
@@ -665,7 +665,7 @@ std::optional<BTree::value_t> BTree::ITree::remove( Node & node, const std::stri
 }
 
 
-void BTree::ITree::removeNodeKey( Node & node, uint32_t keyIndex, std::string & key, value_t & value )
+inline void BTree::ITree::removeNodeKey( Node & node, uint32_t keyIndex, std::string & key, value_t & value )
 {
     key = std::move( node.keys[keyIndex] );
     value = node.values[keyIndex];
@@ -679,7 +679,7 @@ void BTree::ITree::removeNodeKey( Node & node, uint32_t keyIndex, std::string & 
 }
 
 
-bool BTree::ITree::removeKey( Node & node, const std::string & key, value_t & value )
+inline bool BTree::ITree::removeKey( Node & node, const std::string & key, value_t & value )
 {
     uint32_t index = 0;
     bool hasKey = findKeyIndex( node, key, &index );
@@ -715,7 +715,7 @@ bool BTree::ITree::removeKey( Node & node, const std::string & key, value_t & va
 }
 
 
-void BTree::ITree::removeMax( Node & node, std::string & key, value_t & value )
+inline void BTree::ITree::removeMax( Node & node, std::string & key, value_t & value )
 {
     bool hasKey = true;
     uint32_t index = (uint32_t)node.keys.size( ) - 1;
@@ -740,7 +740,7 @@ void BTree::ITree::removeMax( Node & node, std::string & key, value_t & value )
 }
 
 
-void BTree::ITree::growChild( Node & node, Node & child, uint32_t index )
+inline void BTree::ITree::growChild( Node & node, Node & child, uint32_t index )
 {
     bool notLeftMostChild = index > 0;
     bool notRightMostChild = index < node.kids.size( ) - 1;
@@ -856,7 +856,7 @@ void BTree::ITree::growChild( Node & node, Node & child, uint32_t index )
 //! 15         if k > x.key[i]
 //! 16             i = i + 1
 //! 17     B-TREE-INSERT-NONFULL(x.c[i],k)
-bool BTree::ITree::insertNonfull( Node & x, const std::string & key, value_t value )
+inline bool BTree::ITree::insertNonfull( Node & x, const std::string & key, value_t value )
 {
     size_t n = x.keys.size( );
     int index = (int)n - 1;
@@ -906,7 +906,7 @@ bool BTree::ITree::insertNonfull( Node & x, const std::string & key, value_t val
 }
 
 
-bool BTree::ITree::insertNonfull( NodeIndex nodeIndex, const std::string & key, value_t value )
+inline bool BTree::ITree::insertNonfull( NodeIndex nodeIndex, const std::string & key, value_t value )
 {
     auto node = self.drive.readNode( nodeIndex );
     return insertNonfull( node, key, value );
@@ -934,7 +934,7 @@ bool BTree::ITree::insertNonfull( NodeIndex nodeIndex, const std::string & key, 
 //! 18 DISK-WRITE(x)
 //! 19 DISK-WRITE(y)
 //! 20 DISK-WRITE(z)
-void BTree::ITree::splitChildNode( Node & x, size_t childIndex )
+inline void BTree::ITree::splitChildNode( Node & x, size_t childIndex )
 {
     // node must contain entry for childIndex
     assert( childIndex < x.kids.size( ) );
@@ -982,7 +982,7 @@ void BTree::ITree::splitChildNode( Node & x, size_t childIndex )
 //! Returns the lower bound of the key among the node's keys
 //! If the key is present, keyIndex will point to the key in node and returns true.
 //! If the key is not present, keyIndex will point to the index where the key would be and returns false.
-bool BTree::ITree::findKeyIndex( const Node & node, const std::string & key, uint32_t * keyIndex ) const
+inline bool BTree::ITree::findKeyIndex( const Node & node, const std::string & key, uint32_t * keyIndex ) const
 {
     uint32_t i = 0;
     while ( i < node.keys.size( ) )
